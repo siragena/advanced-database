@@ -12,7 +12,7 @@ def get_index():
     return render_template("index.html", item={
         "name":"Greg",
         "title":"Dr."
-    }, count=10)
+    }, count=5)
 
 @app.route("/hi/<name>", methods=["GET"])
 @app.route("/hi", methods=["GET"])
