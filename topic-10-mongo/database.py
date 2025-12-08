@@ -35,6 +35,7 @@ def test_retrieve_pets():
         "kind_name": "Dog",
         "food": "Dog food",
         "noise": "Bark",
+        "color": "brown" #new line added
     }
 
 
@@ -53,12 +54,14 @@ def test_retrieve_pet():
     id = pets[0]["id"]
     pet = retrieve_pet(id)
     del pet["kind_id"]
-    assert pet == {"id": id, "name": "Suzy", "age": 3, "owner": "Greg"}
+    assert pet == {"id": id, "name": "Suzy", "age": 3, "owner": "Greg", "color": "brown"} # color added
 
 
 def create_pet(data):
     pets_collection = pets_db.pets_collection
     data["kind_id"] = ObjectId(data["kind_id"])
+    if "color" not in data:
+        data["color"] = "" # new line added to handle color
     pets_collection.insert_one(data)
 
 
@@ -76,7 +79,7 @@ def test_create_and_delete_pet():
     for pet in pets:
         if pet["name"] == "gamma":
             delete_pet(pet["id"])
-    data = {"name": "gamma", "age": 12, "kind_id": example_kind_id, "owner": "delta"}
+    data = {"name": "gamma", "age": 12, "kind_id": example_kind_id, "owner": "delta", "color": "Black"} #color added
     create_pet(data)
     pets = retrieve_pets()
     found = False
@@ -84,6 +87,7 @@ def test_create_and_delete_pet():
         if pet["name"] == "gamma" and pet["owner"] == "delta":
             assert pet["age"] == 12
             assert pet["kind_name"] == "Dog"
+            assert pet["color"] == "black" #color added
             found = True
             id = pet["id"]
     assert found
@@ -111,13 +115,14 @@ def test_update_pet():
 
     # modify the record with the same kind_id
     kind_id = pet_saved["kind_id"]
-    data = {"name": "gamma", "age": 12, "kind_id": kind_id, "owner": "delta"}
+    data = {"name": "gamma", "age": 12, "kind_id": kind_id, "owner": "delta", "color": "black"} # color added
     update_pet(id, data)
 
     # check that the update happened
     pet = retrieve_pet(id)
     assert pet["name"] == "gamma"
     assert pet["owner"] == "delta"
+    assert pet["color"] == "black" # color added
 
     # restore the original data and verify
     update_pet(id, pet_saved)

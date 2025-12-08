@@ -1,0 +1,12 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "Chinook",
+            "group": "SQLite",
+            "database": "${workspaceFolder:advanceddatabasesystem}/data/Chinook_Sqlite.sqlite"
+        }
+    ]
+}

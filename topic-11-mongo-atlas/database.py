@@ -18,19 +18,55 @@ pets_db = client.pets_db
 
 # PETS
 
+# def retrieve_pets():
+#     pets_collection = pets_db.pets_collection
+#     kind_collection = pets_db.kind_collection
+#     pets = list(pets_collection.find())
+#     for pet in pets:
+#         pet["id"] = str(pet["_id"])
+#         del pet["_id"]
+#         kind = kind_collection.find_one({"_id": pet["kind_id"]})
+#         for tag in ["kind_name", "noise", "food"]:
+#             pet[tag] = kind[tag]
+#         del pet["kind_id"]
+#     return pets
+
+# New retrieve_pets() using $lookup
 def retrieve_pets():
     pets_collection = pets_db.pets_collection
-    kind_collection = pets_db.kind_collection
-    pets = list(pets_collection.find())
+
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "kind_collection",   # collection to join with
+                "localField": "kind_id",     # field in pets
+                "foreignField": "_id",       # field in kinds
+                "as": "kind"                 # name of joined array field
+            }
+        },
+        {
+            "$unwind": "$kind"               # flatten the single-element array
+        }
+    ]
+
+    pets = list(pets_collection.aggregate(pipeline))
+
     for pet in pets:
+        # convert ObjectId to string
         pet["id"] = str(pet["_id"])
         del pet["_id"]
-        kind = kind_collection.find_one({"_id": pet["kind_id"]})
-        for tag in ["kind_name", "noise", "food"]:
-            pet[tag] = kind[tag]
-        del pet["kind_id"]
-    return pets
 
+        # move fields from joined 'kind' subdocument
+        kind = pet["kind"]
+        pet["kind_name"] = kind["kind_name"]
+        pet["food"] = kind["food"]
+        pet["noise"] = kind["noise"]
+
+        # clean up
+        del pet["kind"]
+        del pet["kind_id"]
+
+    return pets
 
 def test_retrieve_pets():
     print("test retrieve_pets")

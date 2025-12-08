@@ -10,13 +10,16 @@
         </tr>
         {% for pet in pets %}
         <tr>
-            {% for key in pet.keys() %}
-            <td>{{ pet[key] }}</td>
-            {% endfor %}
+            <td>{{ pet['id'] }}</td>
+            <td>{{ pet['name'] }}</td>
+            <td>{{ pet['type'] }}</td>
+            <td>{{ pet['age'] }}</td>
+            <td>{{ pet['owner'] }}</td>
             <td><a href="/delete/{{pet['id']}}">Delete</a></td>
             <td><a href="/update/{{pet['id']}}">Update</a></td>
         </tr>
         {% endfor %}
+
     </table>
     <hr/>
     <a href="/create">Create New Pet</a>

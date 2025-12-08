@@ -4,6 +4,8 @@
 # pip3 install mongita
 
 # Import and connect
+# Mongita Interactive Session - MongoDB Concepts Introduction
+
 from mongita import MongitaClientDisk
 
 client = MongitaClientDisk()
@@ -12,51 +14,45 @@ client = MongitaClientDisk()
 hello_world_db = client.hello_world_db
 mongoose_collection = hello_world_db.mongoose_collection
 
-# Insert documents
+# Start fresh so every run is clean
+mongoose_collection.delete_many({})
+
+print("=== Insert documents ===")
 mongoose_collection.insert_many(
     [
         {"name": "Meercat", "does_not_eat": "Snakes"},
         {"name": "Yellow mongoose", "eats": "Termites"},
     ]
 )
+print("All documents after insert:")
+print(list(mongoose_collection.find()))
 
-# Count documents
-mongoose_collection.count_documents({})
-# Returns: 2
+print("\n=== Count documents ===")
+print("Count:", mongoose_collection.count_documents({}))
 
-# Update a document (add new field)
+print("\n=== Update Meercat with weight=2 ===")
 mongoose_collection.update_one({"name": "Meercat"}, {"$set": {"weight": 2}})
+print("Documents with weight > 1:")
+mongoose_list = list(mongoose_collection.find({"weight": {"$gt": 1}}))
+print(mongoose_list)
+print("Number of docs with weight > 1:", len(mongoose_list))
 
-# Query with condition
-cursor = mongoose_collection.find({"weight": {"$gt": 1}})
-mongoose_list = list(cursor)
-len(mongoose_list)
-# Returns: 1
+print("\n=== All documents now ===")
+print(list(mongoose_collection.find()))
 
-mongoose_list
-# Returns: [{'name': 'Meercat', 'does_not_eat': 'Snakes', '_id': ObjectId('...'), 'weight': 2}]
+print("\n=== Delete Meercat ===")
 
-# Find all documents
-list(mongoose_collection.find())
-# Returns both documents
-
-# Find with query
-list(mongoose_collection.find({"weight": {"$gt": 1}}))
-# Returns: [{'name': 'Meercat', 'does_not_eat': 'Snakes', '_id': ObjectId('...'), 'weight': 2}]
-
-# Delete a document
 mongoose_collection.delete_one({"name": "Meercat"})
+print("Docs with weight > 1 after delete:")
 
-# Verify deletion
-list(mongoose_collection.find({"weight": {"$gt": 1}}))
-# Returns: []
+print(list(mongoose_collection.find({"weight": {"$gt": 1}})))
 
-# Insert again
-mongoose_collection.insert_many([{"name": "Meercat", "does_not_eat": "Snakes"}])
+print("\n=== Insert Meercat again ===")
 
-# Check final state
-list(mongoose_collection.find())
-# Returns: [
-#   {'name': 'Yellow mongoose', 'eats': 'Termites', '_id': ObjectId('...')},
-#   {'name': 'Meercat', 'does_not_eat': 'Snakes', '_id': ObjectId('...')}
-# ]
+mongoose_collection.insert_many(
+    [{"name": "Meercat", "does_not_eat": "Snakes"}]
+)
+
+print("\n=== Final state of collection ===")
+
+print(list(mongoose_collection.find()))

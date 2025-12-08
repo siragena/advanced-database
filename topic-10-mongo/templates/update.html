@@ -8,6 +8,7 @@
     <form action="/update/{{ pet['id'] }}" method="POST">
         <p>Name: <input name="name" value="{{ pet['name'] }}" required /></p>
         <p>Age: <input name="age" type="number" min="0" value="{{ pet['age'] }}" required /></p>
+        <p>Color: <input name="color" value="{{ pet['color'] }}" required /></p>
         <p>Owner: <input name="owner" value="{{ pet['owner'] }}" required /></p>
         <p>
             Kind: 
